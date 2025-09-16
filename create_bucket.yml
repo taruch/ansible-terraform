@@ -1,0 +1,35 @@
+---
+- name: Create a Unique AWS S3 Bucket
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}"
+    AWS_SECRET_ACCESS_KEY: "{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}"
+  vars:
+    bucket_prefix: "aap-tf-bucket"
+    unique_bucket_name: "aap-tf-bucket-5abacb29-72ff-48ac-afeb-ec4f3cf6f0d6"
+
+  tasks:
+    # - name: Generate a unique bucket name with a timestamp
+    #   ansible.builtin.set_fact:
+    #     unique_bucket_name: "{{ bucket_prefix }}-{{ ansible_date_time.iso8601_basic_short | lower }}"
+
+    - name: Display the generated bucket name
+      ansible.builtin.debug:
+        msg: "Attempting to create bucket: {{ unique_bucket_name }}"
+
+    - name: Create the S3 bucket with the unique name
+      amazon.aws.s3_bucket:
+        name: "{{ unique_bucket_name }}"
+        state: present
+        region: "us-east-2"
+        # By default, new buckets have all public access blocked.
+        # This is the recommended secure default.
+      register: s3_bucket_result
+
+    - name: Output the bucket creation result
+      ansible.builtin.debug:
+        var: s3_bucket_result
+
+...
