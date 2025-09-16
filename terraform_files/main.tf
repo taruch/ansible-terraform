@@ -1,0 +1,131 @@
+# This Terraform file provisions a single EC2 instance in AWS.
+
+# Configure the Terraform backend in an S3 bucket.
+# This ensures that the state file is stored remotely, enabling
+# collaboration and providing a reliable state history.
+terraform {
+  backend "s3" {
+    # Replace "your-unique-terraform-state-bucket" with a globally unique bucket name.
+    bucket = "aap-tf-bucket-5abacb29-72ff-48ac-afeb-ec4f3cf6f0d6"
+    # The key is the path to the state file within the bucket.
+    key    = "ec2-instance/terraform.tfstate"
+    # The region of the S3 bucket. It is a best practice to match it
+    # with the region of your other resources.
+    region = "us-east-2"
+  }
+}
+
+# Configure the AWS Provider
+# The provider block is used to configure the named provider,
+# in this case, AWS. We are using the "us-east-1" region,
+# but you can change this to any region you prefer.
+provider "aws" {
+  region = "us-east-2"
+}
+
+# Look up the default VPC
+# This data source finds the ID of the default VPC for your account
+# and region, which is useful if you don't want to create a new one.
+data "aws_vpc" "existing_vpc" {
+  # default = true
+  filter {
+    name = "tag:Name"
+    values = ["aws-test-vpc"]
+  }
+}
+
+# Find all subnets in that VPC using the modern aws_subnets data source
+data "aws_subnets" "existing_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.existing_vpc.id]
+  }
+}
+
+# Find the most recent Red Hat Enterprise Linux AMI
+# The data source "aws_ami" is used to dynamically find the latest
+# RHEL AMI. This ensures you always get an up-to-date image.
+data "aws_ami" "rhel" {
+  most_recent = true
+  owners      = ["309956199498"] # This is the AWS account ID for Red Hat AMIs
+
+  filter {
+    name   = "name"
+    # values = ["RHEL-8.*-x86_64-*-Hourly2-GP2"]
+    values = ["RHEL-9.*-x86_64-0-Access2-GP3"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
+# Create a key pair for SSH access
+# The "aws_key_pair" resource creates a new key pair that can be
+# used to securely connect to the EC2 instance via SSH.
+# IMPORTANT: You must replace the "public_key" value with your own
+# public SSH key.
+resource "aws_key_pair" "my_key_pair" {
+  key_name   = "my_key_pair"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC7AitKBjqfgB0J4imQA9hNQJ4q+PZVeP7XXQcwqUB5Pk1hjbNYUtGjO7xaabLgCtO3+rCSPtE1dfzJyg8pmju1YCChi1EcnX+NQGpy4R8UTeTGpnnj+PFudtfTDCKkhOVwJeBFwyOKZKoURGDs5R5qXZt3uaPUOwDjj63UaZ+TI8PkTBEkf2xm7gXk3tARbEMDQ6rMvCG7Hb80qaiOlI9ULi3TssXPFi8u5H8wipCNXLilPh+SC041uHN8IzoIovKXXVvXNxKyTzlSApL3uU3iIyIcWuv5XRlbCjm0pGU08zo3xCU52CUYMjd0RFixuAwtQRKADuWK/db+TOZlx5FCJJf6W04swd2sq28K41KU+7LSCLth+HbxgsC0DVjkrwgGsqXdcWSvIR0u27p0U/OwfXC4E3SLdUwGRGyUjX3bzKqRHE0Tkx86ko8E9AxecfTXRL3kke9wNB5H6WaXxKlhMbkOAQZqdGbH2jG3scqfnz8uhf0YwsJs3F6gaR0IpzE= root@521a82ac764a"
+}
+
+# Create a security group to allow SSH access
+# This resource creates a new security group and defines inbound
+# and outbound rules. In this case, it allows SSH (port 22) from anywhere.
+resource "aws_security_group" "allow_ssh" {
+  name        = "allow_ssh_rhel"
+  description = "Allow SSH inbound traffic to RHEL VM"
+  vpc_id      = data.aws_vpc.existing_vpc.id
+  
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Create the EC2 instance
+# The "aws_instance" resource is the core of this file. It provisions
+# a new virtual machine.
+resource "aws_instance" "my_vm" {
+  ami           = data.aws_ami.rhel.id
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.my_key_pair.key_name
+  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
+  subnet_id  = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
+
+  tags = {
+    Name = "MyTerraformRHELVM"
+  }
+}
+
+resource "aws_instance" "my_vm2" {
+  ami           = data.aws_ami.rhel.id
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.my_key_pair.key_name
+  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
+  subnet_id  = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
+
+  tags = {
+    Name = "MyTerraformRHELVM2"
+  }
+}
+
+
+# Output the public IP address of the instance
+# This output block provides the public IP address of the newly
+# created VM, which is useful for connecting to it later.
+output "public_ip" {
+  value = aws_instance.my_vm.public_ip
+}
+
