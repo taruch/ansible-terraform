@@ -106,7 +106,7 @@ resource "aws_instance" "my_vm" {
 
   tags = {
     Name = "MyTerraformRHELVM"
-    purpose = webserver
+    purpose = "webserver"
   }
 }
 
@@ -119,7 +119,7 @@ resource "aws_instance" "my_vm2" {
 
   tags = {
     Name = "MyTerraformRHELVM2"
-    purpose = webserver
+    purpose = "webserver"
   }
 }
 
