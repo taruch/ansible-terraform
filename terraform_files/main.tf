@@ -105,7 +105,7 @@ resource "aws_instance" "my_vm" {
   subnet_id  = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
 
   tags = {
-    Name = "MyTerraformRHELVM"
+    Name = "MyTerraformRHELVM",
     purpose: webserver
   }
 }
@@ -118,7 +118,7 @@ resource "aws_instance" "my_vm2" {
   subnet_id  = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
 
   tags = {
-    Name = "MyTerraformRHELVM2"
+    Name = "MyTerraformRHELVM2",
     purpose: webserver
   }
 }
