@@ -1,0 +1,48 @@
+---
+- name: Retrieve content from an S3 object
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}"
+    AWS_SECRET_ACCESS_KEY: "{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}"
+  vars:
+    s3_bucket_name: "{{ lookup('ansible.builtin.env', 'S3_BUCKET_NAME') }}"
+    s3_key_name: "ec2-instance/terraform.tfstate"
+    local_temp_path: "/tmp/terraform.tfstate"
+
+  tasks:
+    - name: Display S3 bucket and key information
+      ansible.builtin.debug:
+        msg: "Fetching object from bucket: {{ s3_bucket_name }}, key: {{ s3_key_name }}"
+
+    - name: Display environment variables for debugging on multiple lines
+      ansible.builtin.debug:
+        msg: |
+          AWS_ACCESS_KEY_ID: {{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}
+          AWS_SECRET_ACCESS_KEY: {{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}
+          S3_BUCKET_NAME: {{ lookup('ansible.builtin.env', 'S3_BUCKET_NAME') }}
+
+    - name: Download S3 object content to a temporary file
+      amazon.aws.s3_object:
+        bucket: "{{ s3_bucket_name }}"
+        object: "{{ s3_key_name }}"
+        region: "us-east-2"
+        dest: "{{ local_temp_path }}"
+        mode: get
+      register: s3_file_download
+
+    - name: Read the content from the downloaded file
+      ansible.builtin.slurp:
+        src: "{{ local_temp_path }}"
+      register: file_content
+
+    - name: Display the fetched content
+      ansible.builtin.debug:
+        msg: "The content of the S3 object is:\n{{ file_content.content | b64decode }}"
+
+    # - name: Clean up the temporary file
+    #   ansible.builtin.file:
+    #     path: "{{ local_temp_path }}"
+    #     state: absent
