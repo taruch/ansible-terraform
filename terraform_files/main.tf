@@ -8,7 +8,7 @@ terraform {
     # Replace "your-unique-terraform-state-bucket" with a globally unique bucket name.
     bucket = "aap-tf-bucket-5abacb29-72ff-48ac-afeb-ec4f3cf6f0d6"
     # The key is the path to the state file within the bucket.
-    key    = "ec2-instance/terraform.tfstate"
+    key = "ec2-instance/terraform.tfstate"
     # The region of the S3 bucket. It is a best practice to match it
     # with the region of your other resources.
     region = "us-east-2"
@@ -29,7 +29,7 @@ provider "aws" {
 data "aws_vpc" "existing_vpc" {
   # default = true
   filter {
-    name = "tag:Name"
+    name   = "tag:Name"
     values = ["aws-test-vpc"]
   }
 }
@@ -50,7 +50,7 @@ data "aws_ami" "rhel" {
   owners      = ["309956199498"] # This is the AWS account ID for Red Hat AMIs
 
   filter {
-    name   = "name"
+    name = "name"
     # values = ["RHEL-8.*-x86_64-*-Hourly2-GP2"]
     values = ["RHEL-9.*-x86_64-0-Access2-GP3"]
   }
@@ -78,7 +78,7 @@ resource "aws_security_group" "allow_ssh" {
   name        = "allow_ssh_rhel"
   description = "Allow SSH inbound traffic to RHEL VM"
   vpc_id      = data.aws_vpc.existing_vpc.id
-  
+
   ingress {
     from_port   = 22
     to_port     = 22
@@ -98,41 +98,41 @@ resource "aws_security_group" "allow_ssh" {
 # The "aws_instance" resource is the core of this file. It provisions
 # a new virtual machine.
 resource "aws_instance" "my_vm" {
-  ami           = data.aws_ami.rhel.id
-  instance_type = "t2.micro"
-  key_name      = aws_key_pair.my_key_pair.key_name
+  ami                    = data.aws_ami.rhel.id
+  instance_type          = "t2.micro"
+  key_name               = aws_key_pair.my_key_pair.key_name
   vpc_security_group_ids = [aws_security_group.allow_ssh.id]
-  subnet_id  = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
+  subnet_id              = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
 
   tags = {
-    Name = "MyTerraformRHELVM"
+    Name    = "MyTerraformRHELVM"
     purpose = "webserver"
   }
 }
 
-resource "aws_instance" "my_vm2" {
-  ami           = data.aws_ami.rhel.id
-  instance_type = "t2.micro"
-  key_name      = aws_key_pair.my_key_pair.key_name
-  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
-  subnet_id  = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
-  tags = {
-    Name = "MyTerraformRHELVM2"
-    purpose = "webserver"
-  }
-}
+# resource "aws_instance" "my_vm2" {
+#   ami                    = data.aws_ami.rhel.id
+#   instance_type          = "t2.micro"
+#   key_name               = aws_key_pair.my_key_pair.key_name
+#   vpc_security_group_ids = [aws_security_group.allow_ssh.id]
+#   subnet_id              = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
+#   tags = {
+#     Name    = "MyTerraformRHELVM2"
+#     purpose = "webserver"
+#   }
+# }
 
-resource "aws_instance" "my_vm3" {
-  ami           = data.aws_ami.rhel.id
-  instance_type = "t2.micro"
-  key_name      = aws_key_pair.my_key_pair.key_name
-  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
-  subnet_id  = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
-  tags = {
-    Name = "MyTerraformRHELVM3"
-    purpose = "database"
-  }
-}
+# resource "aws_instance" "my_vm3" {
+#   ami                    = data.aws_ami.rhel.id
+#   instance_type          = "t2.micro"
+#   key_name               = aws_key_pair.my_key_pair.key_name
+#   vpc_security_group_ids = [aws_security_group.allow_ssh.id]
+#   subnet_id              = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
+#   tags = {
+#     Name    = "MyTerraformRHELVM3"
+#     purpose = "database"
+#   }
+# }
 
 # Output the public IP address of the instance
 # This output block provides the public IP address of the newly
