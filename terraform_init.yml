@@ -24,51 +24,6 @@
         path: "{{ terraform_project_path }}"
         state: directory
 
-    - name: Create S3 bucket for Terraform state
-      amazon.aws.s3_bucket:
-        name: "{{ terraform_state_bucket }}"
-        state: present
-        region: "{{ aws_region }}"
-      register: s3_bucket_state_result
-
-    # - name: Create the main.tf Terraform configuration file
-    #   ansible.builtin.copy:
-    #     dest: "{{ terraform_project_path }}/main.tf"
-    #     content: |
-    #       # --- main.tf ---
-    #       # Terraform backend configuration is now managed by the Ansible playbook itself
-    #       # using the `backend_config` parameter of the `cloud.terraform.terraform` module.
-
-    #       provider "aws" {
-    #         region = var.aws_region
-    #       }
-
-    #       resource "aws_instance" "web_server" {
-    #         ami           = "ami-0c55b159cbfafe1f0"
-    #         instance_type = var.instance_type
-    #         tags = {
-    #           Name = "Ansible-Managed-Server"
-    #         }
-    #       }
-
-    #       variable "aws_region" {
-    #         type = string
-    #       }
-
-    #       variable "instance_type" {
-    #         type = string
-    #       }
-    #     mode: '0644'
-
-    # - name: Create the terraform.tfvars file to pass variables
-    #   ansible.builtin.copy:
-    #     dest: "{{ terraform_project_path }}/terraform.tfvars"
-    #     content: |
-    #       # --- terraform.tfvars ---
-    #       aws_region = "{{ aws_region }}"
-    #       instance_type = "{{ instance_type }}"
-    #     mode: '0644'
-
     - name: Apply the Terraform configuration
       cloud.terraform.terraform:
         project_path: "{{ terraform_project_path }}"
