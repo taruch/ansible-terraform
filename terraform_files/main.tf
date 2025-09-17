@@ -110,31 +110,29 @@ resource "aws_instance" "my_vm" {
   }
 }
 
-#resource "aws_instance" "my_vm2" {
-#  ami           = data.aws_ami.rhel.id
-#  instance_type = "t2.micro"
-#  key_name      = aws_key_pair.my_key_pair.key_name
-#  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
-#  subnet_id  = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
+resource "aws_instance" "my_vm2" {
+  ami           = data.aws_ami.rhel.id
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.my_key_pair.key_name
+  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
+  subnet_id  = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
+  tags = {
+    Name = "MyTerraformRHELVM2"
+    purpose = "webserver"
+  }
+}
 
-#  tags = {
-#    Name = "MyTerraformRHELVM2"
-#    purpose = "webserver"
-#  }
-#}
-
-#resource "aws_instance" "my_vm3" {
-#  ami           = data.aws_ami.rhel.id
-#  instance_type = "t2.micro"
-#  key_name      = aws_key_pair.my_key_pair.key_name
-#  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
-#  subnet_id  = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
-#
-#  tags = {
-#    Name = "MyTerraformRHELVM3"
-#    purpose = "database"
-#  }
-#}
+resource "aws_instance" "my_vm3" {
+  ami           = data.aws_ami.rhel.id
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.my_key_pair.key_name
+  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
+  subnet_id  = tolist(data.aws_subnets.existing_subnets.ids)[0] # Use the first subnet found
+  tags = {
+    Name = "MyTerraformRHELVM3"
+    purpose = "database"
+  }
+}
 
 # Output the public IP address of the instance
 # This output block provides the public IP address of the newly
