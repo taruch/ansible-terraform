@@ -1,5 +1,6 @@
 ---
 
+
 controller_credentials:
   - name: "Terraform State Credential"
     description: !unsafe ''
@@ -12,7 +13,22 @@ controller_credentials:
         region: "us-east-2"
         access_key: "{{ username }}"
         secret_key: "{{ password }}"
+  
+  - name: "Quay TRUCH"
+    description: !unsafe ''
+    credential_type: "Container Registry"
+    organization: "Default"
+    inputs:
+      host: quay.io
+      password: ''
+      username: truch
 
+controller_execution_environments:
+  - name: "Terraform EE"
+    description: ""
+    image: "quay.io/truch/network-ee:latest"
+    pull: "missing"
+    credential: "Quay TRUCH"
 
 controller_projects:
   - name: "Ansible Terraform"
