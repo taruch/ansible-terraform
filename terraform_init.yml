@@ -24,6 +24,18 @@
         path: "{{ terraform_project_path }}"
         state: directory
 
+    - name: Create S3 bucket for Terraform state
+      amazon.aws.s3_bucket:
+        name: "{{ terraform_state_bucket }}"
+        state: present
+        region: "{{ aws_region }}"
+      register: s3_bucket_state_result
+
+    - name: Create the main.tf Terraform configuration file
+      ansible.builtin.template:
+        dest: "{{ terraform_project_path }}/main.tf"
+        src: "templates/main_cf.j2"
+
     - name: Apply the Terraform configuration
       cloud.terraform.terraform:
         project_path: "{{ terraform_project_path }}"
