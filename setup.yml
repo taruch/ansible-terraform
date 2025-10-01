@@ -1,0 +1,192 @@
+controller_credentials:
+  - name: "Terraform State Credential"
+    description: !unsafe ''
+    credential_type: "Terraform backend configuration"
+    organization: "Default"
+    inputs:
+      configuration: ''
+
+
+controller_projects:
+  - name: "Terraform Demos Project"
+    description: !unsafe ''
+    organization: "Default"
+    scm_type: "git"
+    scm_url: "https://github.com/HichamMourad/terraform-aap"
+    scm_branch: ""
+    scm_clean: true
+    scm_delete_on_update: false
+    scm_update_on_launch: true
+    scm_update_cache_timeout: "0"
+    scm_refspec: ""
+    allow_override: false
+    update_project: false
+    timeout: "0"
+
+
+controller_inventories:
+  - name: "Terraform Inventory"
+    description: !unsafe ''
+    organization: "Default"
+    prevent_instance_group_fallback: False
+
+
+controller_inventory_sources:
+  - name: "Terraform State Source"
+    description: !unsafe ''
+    organization: "Default"
+    source: "terraform"
+    limit: ""
+    source_path: ""
+    source_vars:
+      backend_type: s3
+      compose:
+        ansible_host: public_ip
+      groups:
+        cloud_aws: true
+        os_linux: tags.blueprint.startswith('rhel')
+      hostnames:
+      - tag:Name
+      keyed_groups:
+      - key: tags.purpose
+        prefix: purpose
+    inventory: "Terraform Inventory"
+    update_on_launch: "False"
+    overwrite: "False"
+    credential: "Terraform State Credential"
+
+
+controller_templates:
+  - name: "TERRAFORM / Create S3 Bucket for State File"
+    description: !unsafe 'Create S3 Bucket for Terraform State File'
+    organization: "Default"
+    project: "Ansible Terraform"
+    inventory: "Demo Inventory"
+    playbook: "create_bucket.yml"
+    scm_branch: ""
+    forks: 0
+    limit: ""
+    verbosity: 0
+    job_type: "run"
+    job_slice_count: 1
+    use_fact_cache: false
+    credentials:
+      - "AWS"
+    allow_simultaneous: false
+    ask_scm_branch_on_launch: false
+    ask_diff_mode_on_launch: false
+    ask_tags_on_launch: false
+    ask_skip_tags_on_launch: false
+    ask_job_type_on_launch: false
+    ask_verbosity_on_launch: false
+    ask_variables_on_launch: false
+    ask_inventory_on_launch: false
+    ask_limit_on_launch: false
+    ask_credential_on_launch: false
+    ask_execution_environment_on_launch: false
+    ask_labels_on_launch: false
+    ask_forks_on_launch: false
+    ask_job_slice_count_on_launch: false
+    ask_timeout_on_launch: false
+    ask_instance_groups_on_launch: false
+    extra_vars: ""
+    job_tags: ""
+    force_handlers: false
+    skip_tags: ""
+    start_at_task: ""
+    timeout: 0
+    custom_virtualenv: ""
+    host_config_key: ""
+    survey_enabled: false
+    become_enabled: false
+    diff_mode: false
+    webhook_service: ""
+    prevent_instance_group_fallback: false
+
+  - name: "TERRAFORM / Deploy"
+    description: !unsafe ''
+    organization: "Default"
+    project: "Ansible Terraform"
+    inventory: "Demo Inventory"
+    playbook: "terraform_init.yml"
+    scm_branch: ""
+    forks: 0
+    limit: ""
+    verbosity: 0
+    job_type: "run"
+    job_slice_count: 1
+    use_fact_cache: false
+    credentials:
+      - "AWS"
+    allow_simultaneous: false
+    ask_scm_branch_on_launch: false
+    ask_diff_mode_on_launch: false
+    ask_tags_on_launch: false
+    ask_skip_tags_on_launch: false
+    ask_job_type_on_launch: false
+    ask_verbosity_on_launch: false
+    ask_variables_on_launch: false
+    ask_inventory_on_launch: false
+    ask_limit_on_launch: false
+    ask_credential_on_launch: false
+    ask_execution_environment_on_launch: false
+    ask_labels_on_launch: false
+    ask_forks_on_launch: false
+    ask_job_slice_count_on_launch: false
+    ask_timeout_on_launch: false
+    ask_instance_groups_on_launch: false
+    extra_vars:
+      aws_region: us-east-2
+    job_tags: ""
+    force_handlers: false
+    skip_tags: ""
+    start_at_task: ""
+    timeout: 0
+    custom_virtualenv: ""
+    host_config_key: ""
+    survey_enabled: false
+    become_enabled: false
+    diff_mode: false
+    webhook_service: ""
+    prevent_instance_group_fallback: false
+
+
+controller_workflows:
+  - name: "TERRAFORM / Deploy and Inventory Sync"
+    description: !unsafe ''
+    organization: "Default"
+    simplified_workflow_nodes:
+      - identifier: "Terraform Inventory"
+        workflow_job_template: "TERRAFORM / Deploy and Inventory Sync"
+        unified_job_template: "Terraform State Source"
+        limit: ""
+        organization: "Default"
+        all_parents_must_converge: "False"
+      - identifier: "Terraform Deploy"
+        workflow_job_template: "TERRAFORM / Deploy and Inventory Sync"
+        unified_job_template: "TERRAFORM / Deploy"
+        limit: ""
+        organization: "Default"
+        all_parents_must_converge: "False"
+        always_nodes:
+          - "Terraform Inventory"
+      - identifier: "Terraform Project Sync"
+        workflow_job_template: "TERRAFORM / Deploy and Inventory Sync"
+        unified_job_template: "Ansible Terraform"
+        limit: ""
+        organization: "Default"
+        all_parents_must_converge: "False"
+        always_nodes:
+          - "Terraform Deploy"
+    ask_variables_on_launch: "False"
+    allow_simultaneous: "False"
+    scm_branch: ""
+    limit: ""
+    ask_limit_on_launch: false
+    ask_inventory_on_launch: false
+    webhook_service: ""
+    extra_vars: ""
+    survey_enabled: false
+
+
+...
