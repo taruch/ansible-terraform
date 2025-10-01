@@ -1,3 +1,5 @@
+---
+
 controller_credentials:
   - name: "Terraform State Credential"
     description: !unsafe ''
@@ -8,15 +10,15 @@ controller_credentials:
 
 
 controller_projects:
-  - name: "Terraform Demos Project"
+  - name: "Ansible Terraform"
     description: !unsafe ''
     organization: "Default"
     scm_type: "git"
-    scm_url: "https://github.com/HichamMourad/terraform-aap"
+    scm_url: "https://github.com/taruch/ansible-terraform.git"
     scm_branch: ""
-    scm_clean: true
+    scm_clean: false
     scm_delete_on_update: false
-    scm_update_on_launch: true
+    scm_update_on_launch: false
     scm_update_cache_timeout: "0"
     scm_refspec: ""
     allow_override: false
