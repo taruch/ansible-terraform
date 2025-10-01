@@ -36,6 +36,11 @@
         dest: "{{ terraform_project_path }}/main.tf"
         src: "templates/main_cf.j2"
 
+    - name: Display the main.cf file
+      ansible.builtin.command:
+        cmd: cat "{{ terraform_project_path }}/main.tf"
+      register: main_tf_content
+
     - name: Apply the Terraform configuration
       cloud.terraform.terraform:
         project_path: "{{ terraform_project_path }}"
