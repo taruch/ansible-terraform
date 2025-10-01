@@ -6,7 +6,12 @@ controller_credentials:
     credential_type: "Terraform backend configuration"
     organization: "Default"
     inputs:
-      configuration: ''
+      configuration: >
+        bucket: "aap-tf-bucket-5abacb29-72ff-48ac-afeb-ec4f3cf6f0d6"
+        key: "ec2-instance/terraform.tfstate"
+        region: "us-east-2"
+        access_key: "{{ username }}"
+        secret_key: "{{ password }}"
 
 
 controller_projects:
