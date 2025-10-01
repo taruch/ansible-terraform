@@ -1,0 +1,13 @@
+---
+- name: Setup demo
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Include configuration demo
+      ansible.builtin.include_vars: "./setup.yml"
+
+    - name: Demo Components
+      ansible.builtin.include_role:
+        name: infra.controller_configuration.dispatch
+      vars:
+        controller_dependency_check: false  # noqa: var-naming[no-role-prefix]:wq!
