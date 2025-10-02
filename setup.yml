@@ -167,12 +167,26 @@ controller_templates:
     timeout: 0
     custom_virtualenv: ""
     host_config_key: ""
-    survey_enabled: false
     become_enabled: false
     diff_mode: false
     webhook_service: ""
     prevent_instance_group_fallback: false
-
+    execution_environment: "Terraform EE"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: How many EC2 instances to create?
+          question_description: Specify the number of EC2 instances to create (1-3)
+          type: multiplechoice
+          variable: instance_count
+          default: 1
+          choices:
+            - 1
+            - 2
+            - 3
+          required: true
 
 controller_workflows:
   - name: "TERRAFORM / Deploy and Inventory Sync"
