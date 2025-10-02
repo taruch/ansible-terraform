@@ -8,7 +8,8 @@
     AWS_ACCESS_KEY_ID: "{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}"
     AWS_SECRET_ACCESS_KEY: "{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}"
   vars:
-    s3_bucket_name: "{{ lookup('ansible.builtin.env', 'S3_BUCKET_NAME') }}"
+    # s3_bucket_name: "{{ lookup('ansible.builtin.env', 'S3_BUCKET_NAME') }}"
+    s3_bucket_name: "aap-tf-bucket-5abacb29-72ff-48ac-afeb-ec4f3cf6f0d6"
     s3_key_name: "ec2-instance/terraform.tfstate"
     local_temp_path: "/tmp/terraform.tfstate"
 
