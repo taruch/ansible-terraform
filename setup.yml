@@ -1,6 +1,5 @@
 ---
 
-
 controller_credentials:
   - name: "Terraform State Credential"
     description: !unsafe ''
@@ -13,22 +12,14 @@ controller_credentials:
         region: "us-east-2"
         access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
         secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
-  
-  - name: "Quay TRUCH"
-    description: !unsafe ''
-    credential_type: "Container Registry"
-    organization: "Default"
-    inputs:
-      host: quay.io
-      password: ''
-      username: truch
+
 
 controller_execution_environments:
   - name: "Terraform EE"
     description: ""
     image: "quay.io/truch/terraform_ee:1.2"
     pull: "missing"
-    credential: "Quay TRUCH"
+
 
 controller_projects:
   - name: "Ansible Terraform"
@@ -178,14 +169,20 @@ controller_templates:
       description: ''
       spec:
         - question_name: How many EC2 instances to create?
-          question_description: Specify the number of EC2 instances to create (1-3)
+          question_description: Specify the number of EC2 instances to create
           type: multiplechoice
           variable: instance_count
-          default: 1
+          default: '1'
           choices:
-            - 1
-            - 2
-            - 3
+            - '1'
+            - '2'
+            - '3'
+          required: true
+        - question_name: SSH Public Key
+          question_description: Provide your SSH public key to access the EC2 instances
+          type: text
+          variable: ssh_public_key
+          default: ''
           required: true
 
 controller_workflows:
@@ -223,7 +220,27 @@ controller_workflows:
     ask_inventory_on_launch: false
     webhook_service: ""
     extra_vars: ""
-    survey_enabled: false
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: How many EC2 instances to create?
+          question_description: Specify the number of EC2 instances to create
+          type: multiplechoice
+          variable: instance_count
+          default: '1'
+          choices:
+            - '1'
+            - '2'
+            - '3'
+          required: true
+        - question_name: SSH Public Key
+          question_description: Provide your SSH public key to access the EC2 instances
+          type: text
+          variable: ssh_public_key
+          default: ''
+          required: true
 
 
 ...
