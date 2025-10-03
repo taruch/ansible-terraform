@@ -116,6 +116,8 @@ controller_templates:
     diff_mode: false
     webhook_service: ""
     prevent_instance_group_fallback: false
+    execution_environment: "Terraform EE"
+
 
   - name: "TERRAFORM / Deploy"
     description: !unsafe ''
