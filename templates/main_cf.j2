@@ -69,7 +69,7 @@ data "aws_ami" "rhel" {
 # public SSH key.
 resource "aws_key_pair" "my_terraform_key_pair" {
   key_name   = "my_terraform_key_pair"
-  public_key = {{ ssh_public_key }}
+  public_key = "{{ ssh_public_key }}"
 }
 
 # Create a security group to allow SSH access
