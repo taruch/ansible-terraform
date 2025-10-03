@@ -67,9 +67,9 @@ data "aws_ami" "rhel" {
 # used to securely connect to the EC2 instance via SSH.
 # IMPORTANT: You must replace the "public_key" value with your own
 # public SSH key.
-resource "aws_key_pair" "my_key_pair" {
-  key_name   = "my_key_pair"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC7AitKBjqfgB0J4imQA9hNQJ4q+PZVeP7XXQcwqUB5Pk1hjbNYUtGjO7xaabLgCtO3+rCSPtE1dfzJyg8pmju1YCChi1EcnX+NQGpy4R8UTeTGpnnj+PFudtfTDCKkhOVwJeBFwyOKZKoURGDs5R5qXZt3uaPUOwDjj63UaZ+TI8PkTBEkf2xm7gXk3tARbEMDQ6rMvCG7Hb80qaiOlI9ULi3TssXPFi8u5H8wipCNXLilPh+SC041uHN8IzoIovKXXVvXNxKyTzlSApL3uU3iIyIcWuv5XRlbCjm0pGU08zo3xCU52CUYMjd0RFixuAwtQRKADuWK/db+TOZlx5FCJJf6W04swd2sq28K41KU+7LSCLth+HbxgsC0DVjkrwgGsqXdcWSvIR0u27p0U/OwfXC4E3SLdUwGRGyUjX3bzKqRHE0Tkx86ko8E9AxecfTXRL3kke9wNB5H6WaXxKlhMbkOAQZqdGbH2jG3scqfnz8uhf0YwsJs3F6gaR0IpzE= root@521a82ac764a"
+resource "aws_key_pair" "my_terraform_key_pair" {
+  key_name   = "my_terraform_key_pair"
+  public_key = {{ ssh_public_key }}
 }
 
 # Create a security group to allow SSH access
