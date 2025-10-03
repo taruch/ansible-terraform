@@ -15,7 +15,7 @@
     instance_type: "t2.micro"
     # New variable for the Terraform state bucket name.
     # terraform_state_bucket: "ansible-terraform-state-{{ lookup('env', 'AWS_ACCOUNT_ID') }}"
-    terraform_state_bucket: "aap-tf-bucket-5abacb29-72ff-48ac-afeb-ec4f3cf6f0d6"
+    terraform_state_bucket: "aap-tf-bucket-5abacb29-72ff-48ac-afeb-ec4f3cf6f0d7"
     terraform_project_path: "./terraform_files"
 
   tasks:
