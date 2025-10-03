@@ -14,16 +14,13 @@
     local_temp_path: "/tmp/terraform.tfstate"
 
   tasks:
-    - name: Display S3 bucket and key information
-      ansible.builtin.debug:
-        msg: "Fetching object from bucket: {{ s3_bucket_name }}, key: {{ s3_key_name }}"
 
     - name: Display environment variables for debugging on multiple lines
       ansible.builtin.debug:
-        msg: |
+        msg: >
           AWS_ACCESS_KEY_ID: {{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}
           AWS_SECRET_ACCESS_KEY: {{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}
-          S3_BUCKET_NAME: {{ lookup('ansible.builtin.env', 'S3_BUCKET_NAME') }}
+          S3_BUCKET_NAME: {{ s3_bucket_name | default(lookup('ansible.builtin.env', 'S3_BUCKET_NAME')) }}
 
     - name: Download S3 object content to a temporary file
       amazon.aws.s3_object:
