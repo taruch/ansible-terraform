@@ -101,7 +101,7 @@ resource "aws_security_group" "allow_ssh" {
 resource "aws_instance" "my_vm_{{ i }}" {
   ami                    = data.aws_ami.rhel.id
   instance_type          = "t2.micro"
-  key_name               = aws_key_pair.my_key_pair.key_name
+  key_name               = aws_key_pair.my_terraform_key_pair.key_name
   vpc_security_group_ids = [aws_security_group.allow_ssh.id]
   subnet_id              = tolist(data.aws_subnets.existing_subnets.ids)[0]
 
