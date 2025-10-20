@@ -65,6 +65,7 @@ controller_inventory_sources:
       - key: tags.purpose
         prefix: purpose
     inventory: "Terraform Inventory"
+    execution_environment: "Terraform EE"
     update_on_launch: "False"
     overwrite: "False"
     credential: "Terraform State Credential"
