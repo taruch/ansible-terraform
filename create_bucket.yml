@@ -14,12 +14,6 @@
     #   ansible.builtin.set_fact:
     #     terraform_state_bucket: "{{ bucket_prefix }}-{{ ansible_date_time.iso8601_basic_short | lower }}"
 
-    - name: Display AWS credentials for debugging
-      ansible.builtin.debug:
-        msg: >
-          AWS_ACCESS_KEY_ID: {{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}
-          AWS_SECRET_ACCESS_KEY: {{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}
-
     - name: Display the generated bucket name
       ansible.builtin.debug:
         msg: "Attempting to create bucket: {{ terraform_state_bucket }}"
