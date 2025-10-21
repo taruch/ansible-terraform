@@ -99,7 +99,8 @@ resource "aws_security_group" "allow_ssh" {
 {% for i in range(instance_count | int) %}
 # --- EC2 instance number {{ i }} ---
 resource "aws_instance" "my_vm_{{ i }}" {
-  ami                    = data.aws_ami.rhel.id
+  # ami                    = data.aws_ami.rhel.id
+  ami                    = "ami-0f7504305008843ad"
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.my_terraform_key_pair.key_name
   vpc_security_group_ids = [aws_security_group.allow_ssh.id]
