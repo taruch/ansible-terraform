@@ -1,0 +1,9 @@
+.terraform.lock.hcl
+.terraform/
+ansible-navigator.log
+ansible.cfg
+terraform_files/.terraform.lock.hcl
+terraform_files/.terraform/
+terraform_files/main.tf
+terraform_state.yml
+collections/ansible_collections
